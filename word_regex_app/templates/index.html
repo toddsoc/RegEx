@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Word Regex Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">Regex dictionary explorer</p>
+        <h1>Test patterns against an English word list.</h1>
+        <p class="lede">
+          Submit any regex and the app will scan the configured dictionary file, returning up to
+          {{ result_limit }} matches.
+        </p>
+        <div class="meta-grid">
+          <div>
+            <span class="meta-label">Loaded words</span>
+            <strong>{{ word_count }}</strong>
+          </div>
+          <div>
+            <span class="meta-label">Source file</span>
+            <strong class="path">{{ word_list_path }}</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <form method="post" class="search-form">
+          <label for="pattern">Regex pattern</label>
+          <div class="input-row">
+            <input
+              id="pattern"
+              name="pattern"
+              type="text"
+              value="{{ pattern }}"
+              placeholder="Examples: ^un.*ed$ or (?i)tion$"
+              autocomplete="off"
+              spellcheck="false"
+              required
+            >
+            <button type="submit">Search</button>
+          </div>
+        </form>
+
+        {% if error %}
+          <div class="message error">{{ error }}</div>
+        {% endif %}
+
+        {% if searched and not error %}
+          <div class="message success">
+            Found {{ matches|length }} match{% if matches|length != 1 %}es{% endif %}.
+          </div>
+        {% endif %}
+
+        <div class="results">
+          {% if matches %}
+            <ul class="results-list">
+              {% for match in matches %}
+                <li>{{ match }}</li>
+              {% endfor %}
+            </ul>
+          {% elif searched and not error %}
+            <p class="empty-state">No words matched that pattern.</p>
+          {% else %}
+            <p class="empty-state">Results will appear here after the first search.</p>
+          {% endif %}
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

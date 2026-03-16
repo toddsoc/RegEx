@@ -1,0 +1,24 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run local Flask app",
+			"type": "shell",
+			"command": ".\\.venv\\Scripts\\python",
+			"args": [
+				"-m",
+				"flask",
+				"--app",
+				"wsgi:app",
+				"run",
+				"--host",
+				"127.0.0.1",
+				"--port",
+				"5000",
+				"--debug"
+			],
+			"isBackground": true,
+			"group": "build"
+		}
+	]
+}
