@@ -18,7 +18,7 @@ def create_app() -> Flask:
     def index() -> str:
         return render_template(
             "index.html",
-            pattern="",
+            pattern="^$",
             matches=[],
             error=None,
             searched=False,

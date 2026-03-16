@@ -31,16 +31,19 @@
         <form method="post" class="search-form">
           <label for="pattern">Regex pattern</label>
           <div class="input-row">
-            <input
-              id="pattern"
-              name="pattern"
-              type="text"
-              value="{{ pattern }}"
-              placeholder="Examples: ^un.*ed$ or (?i)tion$"
-              autocomplete="off"
-              spellcheck="false"
-              required
-            >
+            <div class="input-wrap">
+              <input
+                id="pattern"
+                name="pattern"
+                type="text"
+                value="{{ pattern }}"
+                placeholder="Examples: ^un.*ed$ or (?i)tion$"
+                autocomplete="off"
+                spellcheck="false"
+                required
+              >
+              <button type="button" id="clear-pattern" class="clear-button" aria-label="Clear pattern">x</button>
+            </div>
             <button type="submit">Search</button>
           </div>
         </form>
@@ -57,11 +60,7 @@
 
         <div class="results">
           {% if matches %}
-            <ul class="results-list">
-              {% for match in matches %}
-                <li>{{ match }}</li>
-              {% endfor %}
-            </ul>
+            <pre class="results-text">{{ matches|join('\n') }}</pre>
           {% elif searched and not error %}
             <p class="empty-state">No words matched that pattern.</p>
           {% else %}
@@ -70,5 +69,20 @@
         </div>
       </section>
     </main>
+    <script>
+      (() => {
+        const patternInput = document.getElementById("pattern");
+        const clearButton = document.getElementById("clear-pattern");
+
+        if (!patternInput || !clearButton) {
+          return;
+        }
+
+        clearButton.addEventListener("click", () => {
+          patternInput.value = "";
+          patternInput.focus();
+        });
+      })();
+    </script>
   </body>
 </html>

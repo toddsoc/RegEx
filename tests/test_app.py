@@ -32,6 +32,7 @@ class AppRouteTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Test patterns against an English word list.", body)
+        self.assertIn('value="^$"', body)
 
     def test_search_returns_matches(self) -> None:
         response = self.client.post("/", data={"pattern": "^a"})
@@ -40,7 +41,7 @@ class AppRouteTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("apple", body)
         self.assertIn("apricot", body)
-        self.assertNotIn("banana</li>", body)
+        self.assertNotIn("banana", body)
 
     def test_search_rejects_empty_pattern(self) -> None:
         response = self.client.post("/", data={"pattern": "   "})

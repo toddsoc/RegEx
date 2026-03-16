@@ -107,14 +107,40 @@ h1 {
   gap: 0.75rem;
 }
 
-.input-row input {
+.input-wrap {
   flex: 1;
   min-width: 0;
+  position: relative;
+}
+
+.input-row input {
+  width: 100%;
   padding: 0.95rem 1rem;
+  padding-right: 2.6rem;
   border: 1px solid rgba(23, 32, 51, 0.15);
   border-radius: 14px;
   font-size: 1rem;
   background: var(--paper-strong);
+}
+
+.clear-button {
+  position: absolute;
+  right: 0.45rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(23, 32, 51, 0.14);
+  background: rgba(23, 32, 51, 0.06);
+  color: var(--muted);
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.clear-button:hover {
+  background: rgba(23, 32, 51, 0.12);
 }
 
 .input-row button {
@@ -148,20 +174,19 @@ h1 {
   margin-top: 1.5rem;
 }
 
-.results-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 0.75rem;
-  list-style: none;
-  padding: 0;
+.results-text {
   margin: 0;
-}
-
-.results-list li {
-  padding: 0.8rem 0.95rem;
+  padding: 1rem;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.75);
   border: 1px solid rgba(23, 32, 51, 0.08);
+  background: rgba(255, 255, 255, 0.75);
+  font-family: "Consolas", "Cascadia Mono", monospace;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 24rem;
+  overflow: auto;
 }
 
 .empty-state {
