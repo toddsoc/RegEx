@@ -196,8 +196,9 @@ h1 {
 
 @media (max-width: 700px) {
   .shell {
-    width: min(100% - 1rem, 1120px);
+    width: min(100% - 1.5rem, 1120px);
     padding-top: 1.5rem;
+    padding-bottom: 2rem;
   }
 
   .panel {
@@ -206,5 +207,18 @@ h1 {
 
   .input-row {
     flex-direction: column;
+  }
+
+  .input-row button[type="submit"] {
+    width: 100%;
+  }
+
+  .clear-button {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .results-text {
+    max-height: 16rem;
   }
 }
