@@ -59,6 +59,23 @@ The app will prefer the first word list it can find in this order:
 - `RESULT_LIMIT`: max matches returned to the page. Default: `200`.
 - `REGEX_TIMEOUT_SECONDS`: per-match regex timeout. Default: `0.05`.
 
+## Docker deployment behind nginx
+
+This repo now includes a local Docker setup with two containers:
+
+- `app`: runs the Flask app behind `gunicorn` on port `8000`
+- `nginx`: proxies port `8080` on your machine to the app container
+
+Start it with:
+
+```bash
+docker compose up --build
+```
+
+Then open `http://localhost:8080`.
+
+If you already have a separate local `nginx` container, use [deploy/nginx-word-regex-search.docker.conf](/home/toddsoc/projects/regex-search/deploy/nginx-word-regex-search.docker.conf) as the site config and make sure that container can resolve the app container as `app` on the same Docker network.
+
 ## Ubuntu deployment behind nginx
 
 1. Install system packages.

@@ -1,0 +1,19 @@
+services:
+  app:
+    build:
+      context: .
+    environment:
+      RESULT_LIMIT: "200"
+      REGEX_TIMEOUT_SECONDS: "0.05"
+      WORD_LIST_PATH: /app/data/words.txt
+    expose:
+      - "8000"
+
+  nginx:
+    image: nginx:1.27-alpine
+    depends_on:
+      - app
+    ports:
+      - "8080:80"
+    volumes:
+      - ./deploy/nginx-word-regex-search.docker.conf:/etc/nginx/conf.d/default.conf:ro

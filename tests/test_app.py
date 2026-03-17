@@ -31,7 +31,7 @@ class AppRouteTests(unittest.TestCase):
         body = response.get_data(as_text=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("Test patterns against an English word list.", body)
+        self.assertIn("Regex Lookup", body)
         self.assertIn('value="^$"', body)
 
     def test_search_returns_matches(self) -> None:

@@ -10,7 +10,7 @@
     <main class="shell">
       <section class="hero">
         <p class="eyebrow">Regex dictionary explorer</p>
-        <h1>Test patterns against an English word list.</h1>
+        <h1>Regex Lookup</h1>
         <p class="lede">
           Submit any regex and the app will scan the configured dictionary file, returning up to
           {{ result_limit }} matches.
@@ -42,7 +42,13 @@
                 spellcheck="false"
                 required
               >
-              <button type="button" id="clear-pattern" class="clear-button" aria-label="Clear pattern">x</button>
+              <button
+                type="button"
+                id="clear-pattern"
+                class="clear-button"
+                aria-label="Clear pattern"
+                title="Clear pattern"
+              ></button>
             </div>
             <button type="submit">Search</button>
           </div>
