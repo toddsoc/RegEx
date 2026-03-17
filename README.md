@@ -1,6 +1,6 @@
 # Word Regex Search
 
-Simple Flask application that accepts a regex pattern, runs it against an English word list, and returns matching words in a browser UI. The app is designed to run behind nginx on Ubuntu via gunicorn.
+Simple Flask application that accepts a regex pattern, runs it against an English word list, and returns matching words in a browser UI. The default hosted setup for this project is an nginx Docker container proxying requests to the Flask app container.
 
 ## Features
 
@@ -8,6 +8,23 @@ Simple Flask application that accepts a regex pattern, runs it against an Englis
 - Show invalid regex errors in the UI.
 - Use regex evaluation timeouts to reduce catastrophic backtracking risk.
 - Prefer a system dictionary on Ubuntu, with a bundled fallback word list for local development.
+
+## Docker deployment behind nginx
+
+This repo includes a two-container Docker setup intended to mirror the expected hosted environment:
+
+- `nginx`: the public web entrypoint, exposed on port `8080`
+- `app`: the internal Flask/gunicorn service, reachable only from the Docker network on port `8000`
+
+Start the stack with:
+
+```bash
+docker compose up --build
+```
+
+Then open `http://localhost:8080`.
+
+The nginx container uses `deploy/nginx-word-regex-search.docker.conf` and proxies traffic to the internal `app` service.
 
 ## Local development
 
@@ -59,23 +76,6 @@ The app will prefer the first word list it can find in this order:
 - `RESULT_LIMIT`: max matches returned to the page. Default: `200`.
 - `REGEX_TIMEOUT_SECONDS`: per-match regex timeout. Default: `0.05`.
 
-## Docker deployment behind nginx
-
-This repo now includes a local Docker setup with two containers:
-
-- `app`: runs the Flask app behind `gunicorn` on port `8000`
-- `nginx`: proxies port `8080` on your machine to the app container
-
-Start it with:
-
-```bash
-docker compose up --build
-```
-
-Then open `http://localhost:8080`.
-
-If you already have a separate local `nginx` container, use [deploy/nginx-word-regex-search.docker.conf](/home/toddsoc/projects/regex-search/deploy/nginx-word-regex-search.docker.conf) as the site config and make sure that container can resolve the app container as `app` on the same Docker network.
-
 ## Ubuntu deployment behind nginx
 
 1. Install system packages.
@@ -118,5 +118,6 @@ sudo systemctl reload nginx
 
 ## Notes
 
-- `gunicorn` is used for Ubuntu deployment. It is not used for local development on Windows.
+- Docker is the primary hosted deployment path documented in this repo.
+- `gunicorn` is used inside the Docker app container and in the Ubuntu deployment example. It is not used for local Flask development on Windows.
 - If you want a larger dictionary, install `wamerican`, `wbritish`, or point `WORD_LIST_PATH` at your own word file.
