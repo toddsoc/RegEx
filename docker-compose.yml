@@ -2,6 +2,7 @@ services:
   app:
     build:
       context: .
+    restart: unless-stopped
     environment:
       RESULT_LIMIT: "200"
       REGEX_TIMEOUT_SECONDS: "0.05"
@@ -11,6 +12,7 @@ services:
 
   nginx:
     image: nginx:1.27-alpine
+    restart: unless-stopped
     depends_on:
       - app
     ports:

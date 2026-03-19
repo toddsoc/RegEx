@@ -26,6 +26,13 @@ Then open `http://localhost:8080`.
 
 The nginx container uses `deploy/nginx-word-regex-search.docker.conf` and proxies traffic to the internal `app` service.
 
+To have these containers restart after a machine reboot, make sure each service has `restart: unless-stopped` in `docker-compose.yml` (already set in this repo), start them in detached mode, and ensure Docker starts on boot:
+
+```bash
+docker compose up -d --build
+sudo systemctl enable docker
+```
+
 ## Local development
 
 ### Windows PowerShell
