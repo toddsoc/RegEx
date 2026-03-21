@@ -5,7 +5,16 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from word_regex_app.search import InvalidRegexError, RegexTimeoutError, WordDirectory, load_words
+from word_regex_app.search import (
+    DictionaryConfig,
+    InvalidRegexError,
+    RegexTimeoutError,
+    WordDirectory,
+    default_dictionary,
+    load_dictionary_configs,
+    load_words,
+    resolve_dictionary,
+)
 
 
 class LoadWordsTests(unittest.TestCase):
@@ -17,6 +26,38 @@ class LoadWordsTests(unittest.TestCase):
             load_words.cache_clear()
 
             self.assertEqual(load_words(str(word_file)), ("alpha", "beta"))
+
+
+class DictionaryConfigTests(unittest.TestCase):
+    def tearDown(self) -> None:
+        load_dictionary_configs.cache_clear()
+
+    def test_default_dictionary_is_first_configured_entry(self) -> None:
+        dictionaries = (
+            DictionaryConfig("default", "Default Dictionary", Path("/tmp/default.txt")),
+            DictionaryConfig("alt", "Alt Dictionary", Path("/tmp/alt.txt")),
+        )
+
+        with patch("word_regex_app.search.load_dictionary_configs", return_value=dictionaries):
+            self.assertEqual(default_dictionary(), dictionaries[0])
+
+    def test_resolve_dictionary_uses_matching_id(self) -> None:
+        dictionaries = (
+            DictionaryConfig("default", "Default Dictionary", Path("/tmp/default.txt")),
+            DictionaryConfig("alt", "Alt Dictionary", Path("/tmp/alt.txt")),
+        )
+
+        with patch("word_regex_app.search.load_dictionary_configs", return_value=dictionaries):
+            self.assertEqual(resolve_dictionary("alt"), dictionaries[1])
+
+    def test_resolve_dictionary_falls_back_to_default(self) -> None:
+        dictionaries = (
+            DictionaryConfig("default", "Default Dictionary", Path("/tmp/default.txt")),
+            DictionaryConfig("alt", "Alt Dictionary", Path("/tmp/alt.txt")),
+        )
+
+        with patch("word_regex_app.search.load_dictionary_configs", return_value=dictionaries):
+            self.assertEqual(resolve_dictionary("missing"), dictionaries[0])
 
 
 class WordDirectoryTests(unittest.TestCase):

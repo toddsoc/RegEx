@@ -1,0 +1,17 @@
+[
+  {
+    "id": "default",
+    "name": "Default Dictionary",
+    "file": "words.txt"
+  },
+  {
+    "id": "american",
+    "name": "American English",
+    "file": "american-english"
+  },
+  {
+    "id": "british",
+    "name": "British English",
+    "file": "british-english"
+  }
+]

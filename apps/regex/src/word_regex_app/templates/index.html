@@ -13,23 +13,25 @@
         <p class="eyebrow">Regex dictionary explorer</p>
         <h1>Regex Lookup</h1>
         <p class="lede">
-          Submit any regex and the app will scan the configured dictionary file, returning up to
+          Submit any regex and the app will scan the selected dictionary, returning up to
           {{ result_limit }} matches.
         </p>
         <div class="meta-grid">
           <div>
-            <span class="meta-label">Loaded words</span>
-            <strong>{{ word_count }}</strong>
-          </div>
-          <div>
-            <span class="meta-label">Source file</span>
-            <strong class="path">{{ word_list_path }}</strong>
+            <label class="meta-label" for="dictionary">Dictionary</label>
+            <select id="dictionary" name="dictionary" class="dictionary-select" form="search-form">
+              {% for dictionary in dictionaries %}
+                <option value="{{ dictionary.dictionary_id }}"{% if dictionary.dictionary_id == selected_dictionary_id %} selected{% endif %}>
+                  {{ dictionary.name }}
+                </option>
+              {% endfor %}
+            </select>
           </div>
         </div>
       </section>
 
       <section class="panel">
-        <form method="post" action="{{ url_for('search') }}" class="search-form">
+        <form method="post" action="{{ url_for('search') }}" class="search-form" id="search-form">
           <label for="pattern">Regex pattern</label>
           <div class="input-row">
             <div class="input-wrap">

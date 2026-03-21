@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 
 from __future__ import annotations
 
-import os
+import json
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
@@ -23,39 +23,11 @@ class RegexTimeoutError(RuntimeError):
     pass
 
 
-def _candidate_word_lists() -> list[Path]:
-    env_path = os.getenv("WORD_LIST_PATH")
-    base_dir = Path(__file__).resolve().parent.parent
-    candidates = []
-    if env_path:
-        candidates.append(Path(env_path))
-    candidates.extend(
-        [
-            Path("/usr/share/dict/words"),
-            base_dir / "data" / "words.txt",
-        ]
-    )
-    return candidates
-
-
-def resolve_word_list_path() -> Path:
-    for candidate in _candidate_word_lists():
-        if candidate.exists() and candidate.is_file():
-            return candidate
-
-    searched = ", ".join(str(candidate) for candidate in _candidate_word_lists())
-    raise FileNotFoundError(f"No word list found. Checked: {searched}")
-
-
-@lru_cache(maxsize=4)
-def load_words(path_str: str) -> tuple[str, ...]:
-    path = Path(path_str)
-    with path.open("r", encoding="utf-8") as handle:
-        return tuple(
-            line.strip()
-            for line in handle
-            if line.strip() and not line.startswith("#")
-        )
+@dataclass(frozen=True)
+class DictionaryConfig:
+    dictionary_id: str
+    name: str
+    path: Path
 
 
 @dataclass(frozen=True)
@@ -64,8 +36,7 @@ class WordDirectory:
     words: tuple[str, ...]
 
     @classmethod
-    def from_environment(cls) -> "WordDirectory":
-        path = resolve_word_list_path()
+    def from_path(cls, path: Path) -> "WordDirectory":
         return cls(path=path, words=load_words(str(path)))
 
     @property
@@ -89,3 +60,83 @@ class WordDirectory:
             raise RegexTimeoutError() from exc
 
         return matches
+
+
+def app_root() -> Path:
+    current = Path(__file__).resolve()
+    for parent in current.parents:
+        if (parent / "data").is_dir():
+            return parent
+    raise FileNotFoundError(f"Could not locate app data directory from: {current}")
+
+
+def data_dir() -> Path:
+    return app_root() / "data"
+
+
+def dictionaries_config_path() -> Path:
+    return data_dir() / "dictionaries.json"
+
+
+@lru_cache(maxsize=1)
+def load_dictionary_configs() -> tuple[DictionaryConfig, ...]:
+    config_path = dictionaries_config_path()
+    if not config_path.exists() or not config_path.is_file():
+        raise FileNotFoundError(f"Dictionary config not found: {config_path}")
+
+    with config_path.open("r", encoding="utf-8") as handle:
+        raw_configs = json.load(handle)
+
+    if not isinstance(raw_configs, list) or not raw_configs:
+        raise ValueError("Dictionary config must contain a non-empty list of dictionaries.")
+
+    dictionaries = []
+    seen_ids: set[str] = set()
+
+    for index, entry in enumerate(raw_configs, start=1):
+        if not isinstance(entry, dict):
+            raise ValueError(f"Dictionary config entry {index} must be an object.")
+
+        dictionary_id = str(entry.get("id", "")).strip()
+        name = str(entry.get("name", "")).strip()
+        file_name = str(entry.get("file", "")).strip()
+
+        if not dictionary_id or not name or not file_name:
+            raise ValueError(
+                f"Dictionary config entry {index} must define non-empty 'id', 'name', and 'file' values."
+            )
+
+        if dictionary_id in seen_ids:
+            raise ValueError(f"Duplicate dictionary id in config: {dictionary_id}")
+
+        path = (data_dir() / file_name).resolve()
+        if not path.exists() or not path.is_file():
+            raise FileNotFoundError(f"Configured dictionary file not found: {path}")
+
+        seen_ids.add(dictionary_id)
+        dictionaries.append(DictionaryConfig(dictionary_id=dictionary_id, name=name, path=path))
+
+    return tuple(dictionaries)
+
+
+def default_dictionary() -> DictionaryConfig:
+    return load_dictionary_configs()[0]
+
+
+def resolve_dictionary(dictionary_id: str | None) -> DictionaryConfig:
+    if dictionary_id:
+        for dictionary in load_dictionary_configs():
+            if dictionary.dictionary_id == dictionary_id:
+                return dictionary
+    return default_dictionary()
+
+
+@lru_cache(maxsize=8)
+def load_words(path_str: str) -> tuple[str, ...]:
+    path = Path(path_str)
+    with path.open("r", encoding="utf-8") as handle:
+        return tuple(
+            line.strip()
+            for line in handle
+            if line.strip() and not line.startswith("#")
+        )

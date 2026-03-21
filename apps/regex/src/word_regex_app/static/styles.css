@@ -81,15 +81,21 @@ h1 {
 
 .meta-label {
   display: block;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.5rem;
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--muted);
 }
 
-.path {
-  word-break: break-word;
+.dictionary-select {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(23, 32, 51, 0.15);
+  border-radius: 14px;
+  font-size: 1rem;
+  background: var(--paper-strong);
+  color: var(--ink);
 }
 
 .panel {
@@ -253,6 +259,10 @@ h1 {
 
   .panel {
     padding: 1rem;
+  }
+
+  .dictionary-select {
+    font-size: 1.1rem;
   }
 
   .input-row {
