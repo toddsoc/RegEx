@@ -2,7 +2,7 @@
 
 This repository is now organized to host multiple small apps behind one shared nginx gateway. Each app lives in its own subdirectory under `apps/`, while shared deployment assets live under `infra/`, `compose/`, and `scripts/`.
 
-Copyright (c) 2026 The Smart Guild LLC. Licensed under the MIT License. See [`LICENSE`](/home/toddsoc/projects/regex-search/LICENSE).
+Copyright (c) 2026 The Smart Guild LLC. Licensed under the MIT License. See [`LICENSE`](/home/toddsoc/projects/guild-apps/LICENSE).
 
 ## Layout
 
@@ -15,7 +15,7 @@ Copyright (c) 2026 The Smart Guild LLC. Licensed under the MIT License. See [`LI
 
 ## Current apps
 
-- [`apps/regex/README.md`](/home/toddsoc/projects/regex-search/apps/regex/README.md): Flask regex search app served at `/RegEx/`
+- [`apps/regex/README.md`](/home/toddsoc/projects/guild-apps/apps/regex/README.md): Flask regex search app served at `/RegEx/`
 
 ## Shared Docker workflow
 
@@ -50,8 +50,13 @@ https://todd-ubuntu-docker.nuthatch-ruler.ts.net/RegEx/
 1. Create a new directory under `apps/<name>/`.
 2. Add the app's container build and dependencies there.
 3. Add an nginx path-routing file under `infra/nginx/conf.d/`.
-4. Add a service to [`compose/compose.yml`](/home/toddsoc/projects/regex-search/compose/compose.yml).
+4. Add a service to [`compose/compose.yml`](/home/toddsoc/projects/guild-apps/compose/compose.yml).
 5. Mount the app at a stable path such as `/$AppName/`.
+
+Current example deployment files for the regex app:
+
+- [`infra/nginx/sites-available/regex-app.conf.example`](/home/toddsoc/projects/guild-apps/infra/nginx/sites-available/regex-app.conf.example)
+- [`infra/systemd/regex-app.service.example`](/home/toddsoc/projects/guild-apps/infra/systemd/regex-app.service.example)
 
 ## License
 
