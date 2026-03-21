@@ -45,6 +45,11 @@ The expected app URL on this VM is:
 https://todd-ubuntu-docker.nuthatch-ruler.ts.net/RegEx/
 ```
 
+## Security
+
+Security hardening notes and verification commands are documented in
+[`SECURITY.md`](/home/toddsoc/projects/guild-apps/SECURITY.md).
+
 ## Adding another app
 
 1. Create a new directory under `apps/<name>/`.

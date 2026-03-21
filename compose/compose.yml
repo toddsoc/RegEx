@@ -3,10 +3,19 @@ services:
     build:
       context: ../apps/regex
     restart: unless-stopped
+    read_only: true
     environment:
       RESULT_LIMIT: "200"
       REGEX_TIMEOUT_SECONDS: "0.05"
+      MAX_PATTERN_LENGTH: "256"
       WORD_LIST_PATH: /app/data/words.txt
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+      - /var/tmp
     expose:
       - "8000"
 

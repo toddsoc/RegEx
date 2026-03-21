@@ -10,6 +10,7 @@ class AppRouteTests(unittest.TestCase):
     def setUp(self) -> None:
         self.app = create_app()
         self.client = self.app.test_client()
+        self.same_origin_headers = {"Origin": "http://localhost"}
 
     def test_index_page_loads(self) -> None:
         response = self.client.get("/")
@@ -33,28 +34,44 @@ class AppRouteTests(unittest.TestCase):
         self.assertIn('action="/RegEx/"', body)
 
     def test_search_returns_matches(self) -> None:
-        response = self.client.post("/", data={"pattern": "^a", "dictionary": "default"})
+        response = self.client.post(
+            "/",
+            data={"pattern": "^a", "dictionary": "default"},
+            headers=self.same_origin_headers,
+        )
         body = response.get_data(as_text=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Found", body)
 
     def test_invalid_dictionary_selection_falls_back_to_default(self) -> None:
-        response = self.client.post("/", data={"pattern": "^$", "dictionary": "missing"})
+        response = self.client.post(
+            "/",
+            data={"pattern": "^$", "dictionary": "missing"},
+            headers=self.same_origin_headers,
+        )
         body = response.get_data(as_text=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn('value="default" selected', body)
 
     def test_search_rejects_empty_pattern(self) -> None:
-        response = self.client.post("/", data={"pattern": "   ", "dictionary": "default"})
+        response = self.client.post(
+            "/",
+            data={"pattern": "   ", "dictionary": "default"},
+            headers=self.same_origin_headers,
+        )
         body = response.get_data(as_text=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Enter a regex pattern before searching.", body)
 
     def test_search_reports_invalid_regex(self) -> None:
-        response = self.client.post("/", data={"pattern": "(", "dictionary": "default"})
+        response = self.client.post(
+            "/",
+            data={"pattern": "(", "dictionary": "default"},
+            headers=self.same_origin_headers,
+        )
         body = response.get_data(as_text=True)
 
         self.assertEqual(response.status_code, 200)
@@ -62,11 +79,37 @@ class AppRouteTests(unittest.TestCase):
 
     def test_search_reports_timeout(self) -> None:
         with unittest.mock.patch("word_regex_app.WordDirectory.search", side_effect=RegexTimeoutError()):
-            response = self.client.post("/", data={"pattern": "^a", "dictionary": "default"})
+            response = self.client.post(
+                "/",
+                data={"pattern": "^a", "dictionary": "default"},
+                headers=self.same_origin_headers,
+            )
 
         body = response.get_data(as_text=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn("The regex took too long to evaluate.", body)
+
+    def test_search_rejects_invalid_request_origin(self) -> None:
+        response = self.client.post(
+            "/",
+            data={"pattern": "^a", "dictionary": "default"},
+            headers={"Origin": "https://attacker.example"},
+        )
+        body = response.get_data(as_text=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Request blocked: invalid request origin.", body)
+
+    def test_search_rejects_overly_long_pattern(self) -> None:
+        response = self.client.post(
+            "/",
+            data={"pattern": "a" * 300, "dictionary": "default"},
+            headers=self.same_origin_headers,
+        )
+        body = response.get_data(as_text=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Regex pattern is too long.", body)
 
 
 if __name__ == "__main__":

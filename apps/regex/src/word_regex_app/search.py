@@ -81,6 +81,7 @@ def dictionaries_config_path() -> Path:
 @lru_cache(maxsize=1)
 def load_dictionary_configs() -> tuple[DictionaryConfig, ...]:
     config_path = dictionaries_config_path()
+    allowed_base = data_dir().resolve()
     if not config_path.exists() or not config_path.is_file():
         raise FileNotFoundError(f"Dictionary config not found: {config_path}")
 
@@ -109,7 +110,11 @@ def load_dictionary_configs() -> tuple[DictionaryConfig, ...]:
         if dictionary_id in seen_ids:
             raise ValueError(f"Duplicate dictionary id in config: {dictionary_id}")
 
-        path = (data_dir() / file_name).resolve()
+        path = (allowed_base / file_name).resolve()
+        if not path.is_relative_to(allowed_base):
+            raise ValueError(
+                f"Configured dictionary file must stay within {allowed_base}: {file_name}"
+            )
         if not path.exists() or not path.is_file():
             raise FileNotFoundError(f"Configured dictionary file not found: {path}")
 

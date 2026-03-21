@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -58,6 +59,33 @@ class DictionaryConfigTests(unittest.TestCase):
 
         with patch("word_regex_app.search.load_dictionary_configs", return_value=dictionaries):
             self.assertEqual(resolve_dictionary("missing"), dictionaries[0])
+
+    def test_load_dictionary_configs_rejects_paths_outside_data_dir(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            base = Path(temp_dir)
+            data_dir_path = base / "data"
+            data_dir_path.mkdir()
+            (base / "outside.txt").write_text("secret\n", encoding="utf-8")
+
+            config_path = data_dir_path / "dictionaries.json"
+            config_path.write_text(
+                json.dumps(
+                    [
+                        {
+                            "id": "default",
+                            "name": "Default Dictionary",
+                            "file": "../outside.txt",
+                        }
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            with patch("word_regex_app.search.data_dir", return_value=data_dir_path), patch(
+                "word_regex_app.search.dictionaries_config_path", return_value=config_path
+            ):
+                with self.assertRaises(ValueError):
+                    load_dictionary_configs()
 
 
 class WordDirectoryTests(unittest.TestCase):
