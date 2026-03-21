@@ -9,8 +9,8 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY data ./data
-COPY word_regex_app ./word_regex_app
-COPY wsgi.py .
+COPY src/word_regex_app ./word_regex_app
+COPY src/wsgi.py .
 
 EXPOSE 8000
 

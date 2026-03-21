@@ -1,0 +1,17 @@
+[Unit]
+Description=Word Regex Search gunicorn service
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/word-regex-search/apps/regex/src
+Environment="PATH=/var/www/word-regex-search/apps/regex/.venv/bin"
+Environment="WORD_LIST_PATH=/usr/share/dict/words"
+Environment="RESULT_LIMIT=200"
+Environment="REGEX_TIMEOUT_SECONDS=0.05"
+ExecStart=/var/www/word-regex-search/apps/regex/.venv/bin/gunicorn --workers 3 --bind unix:/run/word-regex-search.sock wsgi:app
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

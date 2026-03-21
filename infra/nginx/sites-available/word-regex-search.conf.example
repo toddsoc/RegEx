@@ -13,7 +13,7 @@ server {
     }
 
     location /RegEx/static/ {
-        alias /var/www/word-regex-search/word_regex_app/static/;
+        alias /var/www/word-regex-search/apps/regex/src/word_regex_app/static/;
         expires 1d;
         add_header Cache-Control "public";
     }
