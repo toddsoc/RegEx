@@ -29,7 +29,7 @@
       </section>
 
       <section class="panel">
-        <form method="post" class="search-form">
+        <form method="post" action="{{ url_for('search') }}" class="search-form">
           <label for="pattern">Regex pattern</label>
           <div class="input-row">
             <div class="input-wrap">

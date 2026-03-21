@@ -35,6 +35,14 @@ class AppRouteTests(unittest.TestCase):
         self.assertIn("The Smart Guild LLC", body)
         self.assertIn('value="^$"', body)
 
+    def test_index_generates_prefixed_urls_when_forwarded_prefix_is_present(self) -> None:
+        response = self.client.get("/", headers={"X-Forwarded-Prefix": "/RegEx"})
+        body = response.get_data(as_text=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('href="/RegEx/static/styles.css"', body)
+        self.assertIn('action="/RegEx/"', body)
+
     def test_search_returns_matches(self) -> None:
         response = self.client.post("/", data={"pattern": "^a"})
         body = response.get_data(as_text=True)

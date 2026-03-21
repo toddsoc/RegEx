@@ -1,7 +1,7 @@
 services:
-  app:
+  regex-app:
     build:
-      context: .
+      context: ../apps/regex
     restart: unless-stopped
     environment:
       RESULT_LIMIT: "200"
@@ -14,8 +14,8 @@ services:
     image: nginx:1.27-alpine
     restart: unless-stopped
     depends_on:
-      - app
+      - regex-app
     ports:
       - "8080:80"
     volumes:
-      - ./deploy/nginx-word-regex-search.docker.conf:/etc/nginx/conf.d/default.conf:ro
+      - ../infra/nginx/conf.d/regex.conf:/etc/nginx/conf.d/default.conf:ro
