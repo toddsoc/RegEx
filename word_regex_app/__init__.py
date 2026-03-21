@@ -10,12 +10,14 @@ from __future__ import annotations
 import os
 
 from flask import Flask, render_template, request
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from .search import InvalidRegexError, RegexTimeoutError, WordDirectory
 
 
 def create_app() -> Flask:
     app = Flask(__name__)
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
     app.config["RESULT_LIMIT"] = int(os.getenv("RESULT_LIMIT", "200"))
     app.config["REGEX_TIMEOUT_SECONDS"] = float(os.getenv("REGEX_TIMEOUT_SECONDS", "0.05"))
 

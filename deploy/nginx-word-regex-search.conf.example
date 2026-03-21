@@ -2,16 +2,26 @@ server {
     listen 80;
     listen [::]:80;
     server_name your-domain.example;
+    absolute_redirect off;
 
-    location /static/ {
+    location = / {
+        return 302 /RegEx/;
+    }
+
+    location = /RegEx {
+        return 302 /RegEx/;
+    }
+
+    location /RegEx/static/ {
         alias /var/www/word-regex-search/word_regex_app/static/;
         expires 1d;
         add_header Cache-Control "public";
     }
 
-    location / {
+    location /RegEx/ {
         include proxy_params;
-        proxy_pass http://unix:/run/word-regex-search.sock;
+        proxy_pass http://unix:/run/word-regex-search.sock:/;
+        proxy_set_header X-Forwarded-Prefix /RegEx;
         proxy_read_timeout 30s;
     }
 }

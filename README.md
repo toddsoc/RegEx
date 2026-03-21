@@ -24,9 +24,9 @@ Start the stack with:
 docker compose up --build
 ```
 
-Then open `http://localhost:8080`.
+Then open `http://localhost:8080/RegEx/`.
 
-The nginx container uses `deploy/nginx-word-regex-search.docker.conf` and proxies traffic to the internal `app` service.
+The nginx container uses `deploy/nginx-word-regex-search.docker.conf` and proxies traffic to the internal `app` service at the `/RegEx/` path.
 
 To have these containers restart after a machine reboot, make sure each service has `restart: unless-stopped` in `docker-compose.yml` (already set in this repo), start them in detached mode, and ensure Docker starts on boot:
 
@@ -62,7 +62,7 @@ tailscale serve status
 On this VM, the expected tailnet-only URL is:
 
 ```text
-https://todd-ubuntu-docker.nuthatch-ruler.ts.net
+https://todd-ubuntu-docker.nuthatch-ruler.ts.net/RegEx/
 ```
 
 If you need to target a different local port, override `PORT` when running the script:
@@ -160,6 +160,8 @@ sudo systemctl reload nginx
 ```
 
 6. Update `server_name` in the nginx config and, if needed, adjust the service file paths to match your deployment directory.
+
+Both nginx examples in this repo are configured to redirect `/` to `/RegEx/`, so the application is served from `https://$FQDN/RegEx/`.
 
 ## Notes
 
