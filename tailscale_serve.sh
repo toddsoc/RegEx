@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Copyright (c) 2026 The Smart Guild LLC
+# Maintainer: Todd O'Connell <toddsoc@linux.com>
+# SPDX-License-Identifier: MIT
 
 set -euo pipefail
 

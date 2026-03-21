@@ -32,6 +32,7 @@ class AppRouteTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("Regex Lookup", body)
+        self.assertIn("The Smart Guild LLC", body)
         self.assertIn('value="^$"', body)
 
     def test_search_returns_matches(self) -> None:

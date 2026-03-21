@@ -2,6 +2,8 @@
 
 Simple Flask application that accepts a regex pattern, runs it against an English word list, and returns matching words in a browser UI. The default hosted setup for this project is an nginx Docker container proxying requests to the Flask app container.
 
+Copyright (c) 2026 The Smart Guild LLC. Licensed under the MIT License. See [`LICENSE`](/home/toddsoc/projects/regex-search/LICENSE).
+
 ## Features
 
 - Search an English word list with arbitrary regex patterns.
@@ -164,3 +166,9 @@ sudo systemctl reload nginx
 - Docker is the primary hosted deployment path documented in this repo.
 - `gunicorn` is used inside the Docker app container and in the Ubuntu deployment example. It is not used for local Flask development on Windows.
 - If you want a larger dictionary, install `wamerican`, `wbritish`, or point `WORD_LIST_PATH` at your own word file.
+
+## License
+
+This project is licensed under the MIT License and owned by The Smart Guild LLC.
+
+Maintainer reference for source files: Todd O'Connell `<toddsoc@linux.com>`.

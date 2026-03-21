@@ -1,3 +1,10 @@
+"""Flask application factory for Word Regex Search.
+
+Copyright (c) 2026 The Smart Guild LLC
+Maintainer: Todd O'Connell <toddsoc@linux.com>
+SPDX-License-Identifier: MIT
+"""
+
 from __future__ import annotations
 
 import os
