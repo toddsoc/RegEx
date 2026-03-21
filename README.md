@@ -33,6 +33,42 @@ docker compose up -d --build
 sudo systemctl enable docker
 ```
 
+## Tailscale HTTPS access
+
+If this VM is already joined to your tailnet, you can publish the Docker nginx endpoint over Tailscale HTTPS. This repo includes [`tailscale_serve.sh`](/home/toddsoc/projects/regex-search/tailscale_serve.sh), which resets any existing `tailscale serve` mapping and points it at the app's HTTP listener on port `8080`.
+
+Run it after the app stack is up:
+
+```bash
+docker compose up -d --build
+chmod +x ./tailscale_serve.sh
+./tailscale_serve.sh
+```
+
+The script uses `sudo tailscale serve ...` because most Linux Tailscale installs require elevated privileges unless you have already granted operator access with:
+
+```bash
+sudo tailscale set --operator=$USER
+```
+
+After the script finishes, inspect the HTTPS URL with:
+
+```bash
+tailscale serve status
+```
+
+On this VM, the expected tailnet-only URL is:
+
+```text
+https://todd-ubuntu-docker.nuthatch-ruler.ts.net
+```
+
+If you need to target a different local port, override `PORT` when running the script:
+
+```bash
+PORT=3000 ./tailscale_serve.sh
+```
+
 ## Local development
 
 ### Windows PowerShell
