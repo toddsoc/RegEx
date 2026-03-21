@@ -248,6 +248,10 @@ h1 {
     flex-direction: column;
   }
 
+  .input-row input {
+    font-size: 1.2rem;
+  }
+
   .input-row button[type="submit"] {
     width: 100%;
   }
